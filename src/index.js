@@ -1,4 +1,7 @@
 import './style.css';
+import DomElements from './domElements';
+
+const dom = new DomElements();
 
 async function getWeatherData(location) {
   try {
@@ -39,10 +42,16 @@ function celsiusData(weatherData) {
   console.log(processed);
 }
 
-getWeatherData('Toronto').then((data) => {
-  farenheitData(data);
-});
-
-getWeatherData('Toronto').then((data) => {
-  celsiusData(data);
+dom.swapTempButton.addEventListener('click', () => {
+  if (dom.swapTempButton.textContent === 'Celsius') {
+    dom.swapTempButton.textContent = 'Fahrenheit';
+    getWeatherData('Toronto').then((data) => {
+      farenheitData(data);
+    });
+  } else {
+    dom.swapTempButton.textContent = 'Celsius';
+    getWeatherData('Toronto').then((data) => {
+      celsiusData(data);
+    });
+  }
 });
