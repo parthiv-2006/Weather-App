@@ -2,6 +2,9 @@ import './style.css';
 import DomElements from './domElements';
 
 const dom = new DomElements();
+dom.swapTempButton.disabled = true;
+dom.swapTempButton.style.opacity = '0.5';
+dom.swapTempButton.style.cursor = 'not-allowed';
 
 async function getWeatherData(location) {
   try {
@@ -16,17 +19,23 @@ async function getWeatherData(location) {
     const weatherData = await response.json();
     return weatherData;
   } catch (error) {
-    console.error('Error fetching data:', error);
+    alert('This Location is not Supported');
+    console.error('Error fetching weather data:', error);
+    dom.form.reset();
+    dom.weatherInfoDisplay.innerHTML = '';
+    dom.swapTempButton.style.opacity = '0.5';
+    dom.swapTempButton.style.cursor = 'not-allowed';
+    dom.swapTempButton.disabled = true;
     return null;
   }
 }
 
 function display(location, description, currentTemp, feelsLikeTemp) {
   dom.weatherInfoDisplay.innerHTML = `
-  ${location}
-  ${description}
-  ${currentTemp}
-  ${feelsLikeTemp}
+  <p>${location}<p>
+  <p>${description}<p>
+  <p>The current temperature is ${currentTemp}<p>
+  <p>It feels like ${feelsLikeTemp}<p>
    `;
 }
 
@@ -76,6 +85,9 @@ dom.swapTempButton.addEventListener('click', () => {
 });
 
 dom.form.addEventListener('submit', async (event) => {
+  dom.swapTempButton.disabled = false;
+  dom.swapTempButton.style.opacity = '1';
+  dom.swapTempButton.style.cursor = 'pointer';
   event.preventDefault();
 
   const location = dom.inputLocation.value;
