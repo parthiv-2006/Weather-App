@@ -21,6 +21,15 @@ async function getWeatherData(location) {
   }
 }
 
+function display(location, description, currentTemp, feelsLikeTemp) {
+  dom.weatherInfoDisplay.innerHTML = `
+  ${location}
+  ${description}
+  ${currentTemp}
+  ${feelsLikeTemp}
+   `;
+}
+
 function farenheitData(weatherData) {
   const processed = {
     location: weatherData.resolvedAddress,
@@ -28,7 +37,12 @@ function farenheitData(weatherData) {
     currentTemp: String(weatherData.days[0].temp.toFixed(1)) + '°F',
     feelsLikeTemp: String(weatherData.days[0].feelslike.toFixed(1)) + '°F',
   };
-  console.log(processed);
+  display(
+    processed.location,
+    processed.description,
+    processed.currentTemp,
+    processed.feelsLikeTemp
+  );
 }
 
 function celsiusData(weatherData) {
@@ -39,19 +53,39 @@ function celsiusData(weatherData) {
     feelsLikeTemp:
       ((weatherData.days[0].feelslike - 32) * (5 / 9)).toFixed(1) + '°C',
   };
-  console.log(processed);
+  display(
+    processed.location,
+    processed.description,
+    processed.currentTemp,
+    processed.feelsLikeTemp
+  );
 }
 
 dom.swapTempButton.addEventListener('click', () => {
   if (dom.swapTempButton.textContent === 'Celsius') {
     dom.swapTempButton.textContent = 'Fahrenheit';
-    getWeatherData('Toronto').then((data) => {
+    getWeatherData(dom.inputLocation.value).then((data) => {
       farenheitData(data);
     });
   } else {
     dom.swapTempButton.textContent = 'Celsius';
-    getWeatherData('Toronto').then((data) => {
+    getWeatherData(dom.inputLocation.value).then((data) => {
       celsiusData(data);
     });
+  }
+});
+
+dom.form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const location = dom.inputLocation.value;
+  const weatherData = await getWeatherData(location);
+
+  if (weatherData) {
+    if (dom.swapTempButton.textContent === 'Celsius') {
+      celsiusData(weatherData);
+    } else {
+      farenheitData(weatherData);
+    }
   }
 });
